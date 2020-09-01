@@ -18,6 +18,7 @@ defmodule NookBook.Data.GenericCache do
   end
 
   def set(_key, nil), do: nil
+
   def set(key, value) do
     Repo.write(generic_cache(key: key, value: value))
     value
@@ -38,20 +39,22 @@ defmodule NookBook.Data.GenericCache do
       {:atomic, list} ->
         list
         |> Enum.map(&generic_cache(&1, :value))
-        _ ->
-          []
+
+      _ ->
+        []
     end
   end
 
   def filter(pattern) do
     table_name()
     |> Repo.filter({table_name(), pattern, :_})
-    |>  case do
+    |> case do
       {:atomic, list} ->
         list
         |> Enum.map(&generic_cache(&1, :value))
-        _ ->
-          []
+
+      _ ->
+        []
     end
   end
 end

@@ -32,13 +32,14 @@ defmodule NookBook.Data.Setup do
     case table_exists?(module.table_name()) do
       true ->
         {:ok, :already_created}
+
       false ->
-          :mnesia.create_table(module.table_name(),
+        :mnesia.create_table(module.table_name(),
           attributes: module.table_fields(),
           type: module.table_type(),
           index: module.table_indexes(),
           disc_copies: nodes()
-          )
+        )
     end
   end
 
