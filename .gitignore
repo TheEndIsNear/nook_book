@@ -35,3 +35,11 @@ npm-debug.log
 
 
 .elixir_ls/
+
+# Terraform artifacts
+.terraform
+terraform.tfstate
+terraform.tfvars
+*.tfstate*
+terraform-provider*v*
+current.plan
