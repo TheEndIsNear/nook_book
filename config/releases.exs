@@ -14,8 +14,8 @@ config :nook_book, NookBookWeb.Endpoint,
       strategy: Cluster.Strategy.Epmd,
       config: [
         hosts: [
-          :"nook_book1@10.0.1.115",
-          :"nook_book2@10.0.1.53"
+          :"nook_book@10.0.1.115",
+          :"nook_book@10.0.1.53"
         ]
       ]
     ]
