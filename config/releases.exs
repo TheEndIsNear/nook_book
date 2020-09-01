@@ -8,21 +8,19 @@ config :nook_book, NookBookWeb.Endpoint,
   url: [host: "#{name}.nookbook.online"],
   secret_key_base: "08Gm1PGaG2HVAj+Jp1wnbVHLCabyigRvQwWhfYbQhesoNKzCRxR9pWMsyPpHKJ20"
 
-config :libcluster,
+  config :libcluster,
   topologies: [
     nook_book: [
       strategy: Cluster.Strategy.Epmd,
       config: [
         hosts: [
-          :"nook_book@10.0.1.115",
-          :"nook_book@10.0.1.53"
+          :"nook_book@10.0.1.231",
+          :"nook_book@10.0.1.65"
         ]
       ]
     ]
   ]
 
 config :nook_book,
-  cluster_role:
-    System.get_env("CLUSTER_ROLE", "member")
-    |> String.to_atom(),
+  cluster_role: System.get_env("CLUSTER_ROLE", "member") |> String.to_atom(),
   base_uri: "http://#{name}.nookbook.online"
