@@ -2,10 +2,10 @@ defmodule NookBookWeb.NookBookLive do
   use NookBookWeb, :live_view
   alias NookBook.ACNH.Cache
 
-  @collction_functions %{
+  @collection_functions %{
     "bugs" => %{list: &Cache.bugs/0, record: &Cache.bug/1},
     "fish" => %{list: &Cache.fish/0, record: &Cache.fish/1},
-    "sea_creatures" => %{list: &Cache.sea_creatures/0, record: &Cache.sea_creatures/1}
+    "sea_creatures" => %{list: &Cache.sea_creatures/0, record: &Cache.sea_creature/1}
   }
 
   @impl true
@@ -30,7 +30,7 @@ defmodule NookBookWeb.NookBookLive do
   def handle_event("toggle", %{"collection" => name}, socket) do
     section_collection =
       if !socket.assigns.toggles[name] do
-        @collction_functions[name].list.()
+        @collection_functions[name].list.()
         |> Enum.map(fn record ->
           %{
             id: record["id"],
@@ -45,14 +45,14 @@ defmodule NookBookWeb.NookBookLive do
     {:noreply,
      assign(socket, %{
        toggles: Map.put(socket.assigns.toggles, name, !socket.assigns.toggles[name]),
-       collection: Map.put(socket.assigns.collections, name, section_collection)
+       collections: Map.put(socket.assigns.collections, name, section_collection)
      })}
   end
 
   @impl true
   def handle_event("show", %{"collection" => name, "id" => id}, socket) do
     record =
-      case @collction_functions[name].record.(String.to_integer(id)) do
+      case @collection_functions[name].record.(String.to_integer(id)) do
         nil ->
           nil
 

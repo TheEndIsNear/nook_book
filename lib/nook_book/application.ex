@@ -24,7 +24,7 @@ defmodule NookBook.Application do
   end
 
   def start_phase(:init, :normal, _) do
-    Application.get_env(:nook_book, :cluser_role)
+    Application.get_env(:nook_book, :cluster_role)
     |> NookBook.Data.Setup.setup()
   end
 

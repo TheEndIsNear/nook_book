@@ -19,7 +19,7 @@ defmodule NookBookWeb.Router do
 
     live("/", NookBookLive, :index)
     get("/icons/:namespace/:id", ImageController, :icon)
-    get("/images/:namespace/:id", ImageController, :images)
+    get("/images/:namespace/:id", ImageController, :image)
   end
 
   # Other scopes may use custom stacks.

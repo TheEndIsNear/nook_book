@@ -1,5 +1,5 @@
 defmodule NookBook.Data.Setup do
-  require Logger
+  import Logger
 
   @tables [
     NookBook.Data.GenericCache
@@ -16,7 +16,8 @@ defmodule NookBook.Data.Setup do
     Node.connect(Application.get_env(:nook_book, :primary_node))
     Logger.info("Setting up mnesia for member node, cluster peers:")
     Logger.info(inspect(nodes()))
-    [existing_node | _] = Node.list(:visible)
+
+    [existing_node | _] = Node.list([:visible])
     name = Node.self()
 
     :mnesia.start()
@@ -25,22 +26,6 @@ defmodule NookBook.Data.Setup do
     :mnesia.change_table_copy_type(:schema, name, :disc_copies)
     :mnesia.add_table_copy(:schema, name, :disc_copies)
     sync_remote_tables_to_local_disk()
-  end
-
-  def sync_remote_tables_to_local_disk do
-    name = Node.self()
-
-    :mnesia.system_info(:tables)
-    |> Enum.each(fn table ->
-      case name in :mnesia.table_info(table, :disc_copies) do
-        true ->
-          :ok
-
-        false ->
-          Logger.info("Syncing #{table}")
-          :mnesia.add_table_copy(table, name, :disc_copies)
-      end
-    end)
   end
 
   def create_schema() do
@@ -57,7 +42,18 @@ defmodule NookBook.Data.Setup do
     end
   end
 
-  def create_tables do
+  def nodes(), do: [node() | Node.list([:visible])]
+
+  def schema_exists_anywhere?() do
+    {answers, _} = :rpc.multicall(nodes(), NookBook.Data.Setup, :schema_exists?, [])
+    Enum.any?(answers, fn x -> x end)
+  end
+
+  def schema_exists?() do
+    :mnesia.table_info(:schema, :disc_copies) != []
+  end
+
+  def create_tables() do
     @tables
     |> Enum.each(&create_table/1)
   end
@@ -68,7 +64,8 @@ defmodule NookBook.Data.Setup do
         {:ok, :already_created}
 
       false ->
-        :mnesia.create_table(module.table_name(),
+        :mnesia.create_table(
+          module.table_name(),
           attributes: module.table_fields(),
           type: module.table_type(),
           index: module.table_indexes(),
@@ -81,20 +78,25 @@ defmodule NookBook.Data.Setup do
     Enum.member?(:mnesia.system_info(:tables), table_name)
   end
 
-  def wait_for_tables do
+  def wait_for_tables() do
     :mnesia.wait_for_tables(table_names(), 10_000)
   end
 
-  def table_names, do: @tables |> Enum.map(&apply(&1, :table_name, []))
+  def table_names(), do: @tables |> Enum.map(&apply(&1, :table_name, []))
 
-  def nodes(), do: [node() | Node.list([:visible])]
+  def sync_remote_tables_to_local_disk() do
+    name = Node.self()
 
-  def schema_exists_anywhere?() do
-    {answers, _} = :rpc.multicall(nodes(), NookBook.Data.Setup, :schema_exists?, [])
-    Enum.any?(answers, fn x -> x end)
-  end
+    :mnesia.system_info(:tables)
+    |> Enum.each(fn table ->
+      case Node.self() in :mnesia.table_info(table, :disc_copies) do
+        true ->
+          :ok
 
-  def schema_exists?() do
-    :mnesia.table_info(:schema, :disc_copies) != []
+        false ->
+          Logger.info("Syncing #{table}")
+          :mnesia.add_table_copy(table, name, :disc_copies)
+      end
+    end)
   end
 end
