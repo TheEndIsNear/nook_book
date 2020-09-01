@@ -5,7 +5,7 @@ defmodule NookBookWeb.ImageController do
   @collection_functions %{
     "bugs" => %{icon: &Cache.bug_icon/1, image: &Cache.bug_image/1},
     "fish" => %{icon: &Cache.fish_icon/1, image: &Cache.fish_image/1},
-    "sea_creatures" => %{icon: &Cache.sea_creatures_icon/1, image: &Cache.sea_creatures_image/1}
+    "sea_creatures" => %{icon: &Cache.sea_creature_icon/1, image: &Cache.sea_creature_image/1}
   }
 
   def icon(conn, %{"namespace" => namespace, "id" => id}) do
