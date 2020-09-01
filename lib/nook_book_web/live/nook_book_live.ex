@@ -44,7 +44,7 @@ defmodule NookBookWeb.NookBookLive do
 
     {:noreply,
      assign(socket, %{
-       toggles: Map.put(socket.assings.toggle, name, !socket.assigns.toggles[name]),
+       toggles: Map.put(socket.assigns.toggles, name, !socket.assigns.toggles[name]),
        collection: Map.put(socket.assigns.collections, name, section_collection)
      })}
   end
