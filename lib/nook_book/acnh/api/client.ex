@@ -23,7 +23,7 @@ defmodule NookBook.ACNH.API.Client do
     |> Private.unwrap_response()
   end
 
-  def bug_inage(id) do
+  def bug_image(id) do
     "/images/bugs/#{id}"
     |> get()
     |> Private.unwrap_response()
