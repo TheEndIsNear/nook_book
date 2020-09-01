@@ -22,7 +22,7 @@ defmodule NookBook.MixProject do
     [
       mod: {NookBook.Application, []},
       extra_applications: [:logger, :runtime_tools],
-      included_application: [:mnesia],
+      included_applications: [:mnesia],
       start_phases: [init: []]
     ]
   end
